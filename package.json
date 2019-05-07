@@ -30,7 +30,9 @@
     "nock": "^10.0.0",
     "nodemon": "^1.17.2",
     "smee-client": "^1.0.2",
-    "standard": "^12.0.1"
+    "standard": "^12.0.1",
+    "testdouble": "^3.11.0",
+    "testdouble-jest": "^2.0.0"
   },
   "engines": {
     "node": ">= 8.3.0"
@@ -38,6 +40,10 @@
   "standard": {
     "env": [
       "jest"
+    ],
+    "globals": [
+      "td",
+      "nock"
     ]
   },
   "nodemonConfig": {
@@ -48,6 +54,9 @@
     ]
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./test/helper.js"
+    ]
   }
 }

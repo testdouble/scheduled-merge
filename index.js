@@ -1,7 +1,7 @@
-const createScheduler = require('probot-scheduler')
+const probotScheduler = require('probot-scheduler')
 
 module.exports = app => {
-  createScheduler(app, {
+  probotScheduler(app, {
     delay: process.env.NODE_ENV === 'production'
   })
   app.on('schedule.repository', async function (context) {
@@ -13,6 +13,7 @@ module.exports = app => {
       owner, repo, name: labelName
     }).catch(() => { app.log.debug(`No label named ${labelName}`) })
 
+    console.log('wat lable!?', label)
     if (label) {
       app.log.debug(`Searching for PRs labeled ${labelName}`)
       const labels = label.data.name

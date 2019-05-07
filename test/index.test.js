@@ -1,41 +1,52 @@
-const nock = require('nock')
-// Requiring our app implementation
-const myProbotApp = require('..')
 const { Probot } = require('probot')
-// Requiring our fixtures
-const payload = require('./fixtures/issues.opened')
-const issueCreatedBody = { body: 'Thanks for opening this issue!' }
 
-nock.disableNetConnect()
-
-describe('My Probot app', () => {
-  let probot
+describe('scheduled-merge', () => {
+  let probot, probotScheduler, app, api, nockApi
 
   beforeEach(() => {
-    probot = new Probot({})
-    // Load our app into probot
-    const app = probot.load(myProbotApp)
+    probot = new Probot({
+      cert: '...',
+      secret: '...',
+      id: 12345,
+      githubToken: 'test'
+    })
+    probotScheduler = td.replace('probot-scheduler')
 
-    // just return a test token
-    app.app = () => 'test'
+    app = probot.load(require('..'))
+    // app.app = () => 'test' // A fake token returned by the test
+    api = nock('https://api.github.com')
   })
 
-  test('creates a comment when an issue is opened', async () => {
-    // Test that we correctly return a test token
-    nock('https://api.github.com')
-      .post('/app/installations/2/access_tokens')
-      .reply(200, { token: 'test' })
+  test('starts probot-scheduler', async () => {
+    td.verify(probotScheduler(app, {
+      delay: false
+    }))
+  })
 
-    // Test that a comment is posted
-    nock('https://api.github.com')
-      .post('/repos/hiimbex/testing-things/issues/1/comments', (body) => {
-        expect(body).toMatchObject(issueCreatedBody)
-        return true
-      })
-      .reply(200)
+  test('does nothing when no label is found', async () => {
+    // td.when(api.post('/app/installations/2/access_tokens'))
+    //   .thenReturn({ token: 'test' })
 
-    // Receive a webhook event
-    await probot.receive({ name: 'issues', payload })
+    api.get('/repos/fakey/mcfakealot/labels/merge-2019-05-07')
+      .reply(404)
+
+    // nock('http://www.google.com')
+    //   .get('/cat-poems')
+    //   .replyWithError({
+    //     message: 'something awful happened',
+    //     code: 'AWFUL_ERROR',
+    //   })
+
+    await probot.receive({ name: 'schedule.repository',
+      payload: {
+        'repository': {
+          'name': 'mcfakealot',
+          'owner': {
+            'login': 'fakey'
+          }
+        }
+      }
+    })
   })
 })
 
