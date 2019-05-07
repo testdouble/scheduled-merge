@@ -1,0 +1,53 @@
+{
+  "name": "scheduled-merge",
+  "version": "1.0.0",
+  "description": "Merge PRs on a specified date using Labels",
+  "author": "Justin Searls <searls@gmail.com> (https://github.com/testdouble/scheduled-merge)",
+  "license": "MIT",
+  "repository": "https://github.com//scheduled-merge.git",
+  "homepage": "https://github.com//scheduled-merge",
+  "bugs": "https://github.com//scheduled-merge/issues",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app",
+    "scheduled posts"
+  ],
+  "scripts": {
+    "dev": "nodemon",
+    "start": "probot run ./index.js",
+    "debug": "node --inspect-brk node_modules/probot/bin/probot.js run ./index.js",
+    "lint": "standard --fix",
+    "test": "jest && standard",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+  },
+  "dependencies": {
+    "probot": "^9.2.10",
+    "probot-scheduler": "^2.0.0-beta.1"
+  },
+  "devDependencies": {
+    "jest": "^24.0.0",
+    "nock": "^10.0.0",
+    "nodemon": "^1.17.2",
+    "smee-client": "^1.0.2",
+    "standard": "^12.0.1"
+  },
+  "engines": {
+    "node": ">= 8.3.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      ".env",
+      "."
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
