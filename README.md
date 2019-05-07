@@ -11,3 +11,4 @@ merge fails, the app will leave a comment with the error.
 hour), which could lead to a lot of comments on a lot of PRs if they aren't
 mergeable!)
 
+To deploy your own instance, check out [the Probot docs](https://probot.github.io/docs/deployment/#heroku)
