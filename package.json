@@ -18,7 +18,7 @@
     "start": "probot run ./index.js",
     "debug": "node --inspect-brk node_modules/probot/bin/probot.js run ./index.js",
     "lint": "standard --fix",
-    "test": "jest && standard",
+    "test": "jest --detectOpenHandles && standard",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
