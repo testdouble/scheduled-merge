@@ -20,7 +20,8 @@ describe('scheduled-merge', () => {
   })
 
   test('does nothing when no label is found', async () => {
-    api.get('/repos/fake/stuff/labels/merge-2019-05-07')
+    api.filteringPath(/\d{4}-\d{2}-\d{2}/g, 'YYYY-MM-DD')
+      .get('/repos/fake/stuff/labels/merge-YYYY-MM-DD')
       .reply(404)
 
     await probot.receive({ name: 'schedule.repository',
