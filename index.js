@@ -13,7 +13,6 @@ module.exports = app => {
       owner, repo, name: labelName
     }).catch(() => { app.log.debug(`No label named ${labelName}`) })
 
-    console.log('wat lable!?', label)
     if (label) {
       app.log.debug(`Searching for PRs labeled ${labelName}`)
       const labels = label.data.name
