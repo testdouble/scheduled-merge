@@ -39,6 +39,21 @@ describe('scheduled-merge', () => {
     await fauxbot.trigger()
   })
 
+  test('does nothing when `merge-failed` label is applied', async () => {
+    api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
+
+    api.get('/repos/fake/stuff/issues')
+      .query({ 'labels': label, 'state': 'open' })
+      .reply(200, [{
+        url: 'fake pull url',
+        number: 999,
+        labels: [{ name: label }, { name: 'merge-failed' }],
+        state: 'open'
+      }])
+
+    await fauxbot.trigger()
+  })
+
   test('merges PR when labeled, open, and mergeable', async () => {
     api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
@@ -61,7 +76,7 @@ describe('scheduled-merge', () => {
 
     api.get('/repos/fake/stuff/issues')
       .query({ 'labels': label, 'state': 'open' })
-      .reply(200, [{ number: 999 }])
+      .reply(200, [{ number: 999, labels: [] }])
 
     api.put('/repos/fake/stuff/pulls/999/merge')
       .reply(405, { 'message': 'Pull Request is not mergeable' })

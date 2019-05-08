@@ -24,18 +24,23 @@ module.exports = app => {
 
       await Promise.all(pulls.data.map(async pull => {
         app.log.debug(`Merging PR: ${pull.url}`)
-        return github.pulls.merge({
-          owner,
-          repo,
-          pull_number: pull.number
-        }).catch(e => {
-          return github.issues.createComment({
+        if (pull.labels.find(l => l.name === 'merge-failed')) {
+          app.log.debug('Skipping because `merge-failed` label was applied.')
+          return false
+        } else {
+          return github.pulls.merge({
             owner,
             repo,
-            issue_number: pull.number,
-            body: `Failed to automatically merge with error: **${e.message}**`
+            pull_number: pull.number
+          }).catch(e => {
+            return github.issues.createComment({
+              owner,
+              repo,
+              issue_number: pull.number,
+              body: `Failed to automatically merge with error: **${e.message}**`
+            })
           })
-        })
+        }
       }))
     }
   })
