@@ -1,25 +1,23 @@
 const labelOfTheDay = require('../lib/label-of-the-day')
 const Fauxbot = require('./fauxbot')
 
-describe('scheduled-merge', () => {
-  let fauxbot, api, label
-
-  beforeEach(() => {
+let fauxbot, label
+module.exports = {
+  beforeEach () {
     fauxbot = new Fauxbot({
       probotScheduler: td.replace('probot-scheduler'),
       appFn: require('..')
     })
-    api = nock('https://api.github.com')
     label = labelOfTheDay()
-  })
+  },
 
-  test('starts probot-scheduler', async () => {
+  async 'starts probot-scheduler' () {
     td.verify(fauxbot.probotScheduler(fauxbot.app, {
       delay: false
     }))
-  })
+  },
 
-  test('does nothing when no label is found', async () => {
+  async 'does nothing when no label is found' () {
     api.get(`/repos/fake/stuff/labels/${label}`)
       .reply(404, {
         message: 'Not Found',
@@ -27,9 +25,9 @@ describe('scheduled-merge', () => {
       })
 
     await fauxbot.trigger()
-  })
+  },
 
-  test('does nothing when label is found but no pulls are open', async () => {
+  async 'does nothing when label is found but no pulls are open' () {
     api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
     api.get('/repos/fake/stuff/issues')
@@ -37,9 +35,9 @@ describe('scheduled-merge', () => {
       .reply(200, [])
 
     await fauxbot.trigger()
-  })
+  },
 
-  test('does nothing when `merge-failed` label is applied', async () => {
+  async 'does nothing when `merge-failed` label is applied' () {
     api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
     api.get('/repos/fake/stuff/issues')
@@ -52,9 +50,9 @@ describe('scheduled-merge', () => {
       }])
 
     await fauxbot.trigger()
-  })
+  },
 
-  test('merges PR when labeled, open, and mergeable', async () => {
+  async 'merges PR when labeled, open, and mergeable' () {
     api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
     api.get('/repos/fake/stuff/issues')
@@ -69,9 +67,9 @@ describe('scheduled-merge', () => {
     api.put('/repos/fake/stuff/pulls/999/merge').reply(200)
 
     await fauxbot.trigger()
-  })
+  },
 
-  test('leaves a comment when a PR is not mergeable', async () => {
+  async 'leaves a comment when a PR is not mergeable' () {
     api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
     api.get('/repos/fake/stuff/issues')
@@ -86,5 +84,5 @@ describe('scheduled-merge', () => {
     }).reply(201)
 
     await fauxbot.trigger()
-  })
-})
+  }
+}

@@ -1,20 +1,27 @@
 global.td = require('testdouble')
 global.nock = require('nock')
-require('testdouble-jest')(td, jest)
+global.ought = require('ought')
 
-beforeAll(function () {
-  nock.disableNetConnect()
+module.exports = {
+  beforeAll () {
+    nock.disableNetConnect()
 
-  process.on('unhandledRejection', error => {
-    process.stderr.write(error.stack)
-    process.exit(1)
-  })
-})
+    process.on('unhandledRejection', error => {
+      process.stderr.write(error.stack)
+      process.exit(1)
+    })
+  },
 
-beforeEach(function () {
-  td.reset.onNextReset(() => nock.cleanAll())
-})
+  beforeEach () {
+    ought.equal(nock.pendingMocks(), [])
+    td.reset.onNextReset(() => nock.cleanAll())
+    global.api = nock('https://api.github.com')
+    setTimeout(() => {
+      api.done()
+    }, 700)
+  },
 
-afterEach(function () {
-  td.reset()
-})
+  afterEach () {
+    td.reset()
+  }
+}
