@@ -22,14 +22,14 @@ module.exports = app => {
         owner, repo, labels, state: 'open'
       }).catch(() => { app.log.debug('No open PRs found') })
 
-      await Promise.all(pulls.data.map(pull => {
+      await Promise.all(pulls.data.map(async pull => {
         app.log.debug(`Merging PR: ${pull.url}`)
         return github.pulls.merge({
           owner,
           repo,
           pull_number: pull.number
         }).catch(e => {
-          github.issues.createComment({
+          return github.issues.createComment({
             owner,
             repo,
             issue_number: pull.number,

@@ -84,4 +84,30 @@ describe('scheduled-merge', () => {
       }
     })
   })
+
+  test('leaves a comment when a PR is not mergeable', async () => {
+    api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
+
+    api.get('/repos/fake/stuff/issues')
+      .query({ 'labels': label, 'state': 'open' })
+      .reply(200, [{ number: 999 }])
+
+    api.put('/repos/fake/stuff/pulls/999/merge')
+      .reply(405, { 'message': 'Pull Request is not mergeable' })
+
+    api.post('/repos/fake/stuff/issues/999/comments', {
+      body: 'Failed to automatically merge with error: **Pull Request is not mergeable**'
+    }).reply(201)
+
+    await probot.receive({ name: 'schedule.repository',
+      payload: {
+        'repository': {
+          'name': 'stuff',
+          'owner': {
+            'login': 'fake'
+          }
+        }
+      }
+    })
+  })
 })
