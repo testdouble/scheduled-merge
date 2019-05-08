@@ -7,7 +7,8 @@ describe('scheduled-merge', () => {
   beforeEach(() => {
     api = nock('https://api.github.com')
     probot = new Probot({
-      githubToken: 'test'
+      Octokit: require('@octokit/rest'), // prevent retries
+      githubToken: 'test' // make probot-scheduler work
     })
     label = labelOfTheDay()
 
