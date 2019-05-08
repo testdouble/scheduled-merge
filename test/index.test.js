@@ -1,23 +1,20 @@
-const { Probot } = require('probot')
 const labelOfTheDay = require('../lib/label-of-the-day')
+const Fauxbot = require('./fauxbot')
 
 describe('scheduled-merge', () => {
-  let probot, probotScheduler, app, api, label
+  let fauxbot, api, label
 
   beforeEach(() => {
-    api = nock('https://api.github.com')
-    probot = new Probot({
-      Octokit: require('@octokit/rest'), // prevent retries
-      githubToken: 'test' // make probot-scheduler work
+    fauxbot = new Fauxbot({
+      probotScheduler: td.replace('probot-scheduler'),
+      appFn: require('..')
     })
+    api = nock('https://api.github.com')
     label = labelOfTheDay()
-
-    probotScheduler = td.replace('probot-scheduler')
-    app = probot.load(require('..'))
   })
 
   test('starts probot-scheduler', async () => {
-    td.verify(probotScheduler(app, {
+    td.verify(fauxbot.probotScheduler(fauxbot.app, {
       delay: false
     }))
   })
@@ -29,16 +26,7 @@ describe('scheduled-merge', () => {
         documentation_url: 'https://developer.github.com/v3/issues/labels/#get-a-single-label'
       })
 
-    await probot.receive({ name: 'schedule.repository',
-      payload: {
-        'repository': {
-          'name': 'stuff',
-          'owner': {
-            'login': 'fake'
-          }
-        }
-      }
-    })
+    await fauxbot.trigger()
   })
 
   test('does nothing when label is found but no pulls are open', async () => {
@@ -48,16 +36,7 @@ describe('scheduled-merge', () => {
       .query({ 'labels': label, 'state': 'open' })
       .reply(200, [])
 
-    await probot.receive({ name: 'schedule.repository',
-      payload: {
-        'repository': {
-          'name': 'stuff',
-          'owner': {
-            'login': 'fake'
-          }
-        }
-      }
-    })
+    await fauxbot.trigger()
   })
 
   test('merges PR when labeled, open, and mergeable', async () => {
@@ -74,16 +53,7 @@ describe('scheduled-merge', () => {
 
     api.put('/repos/fake/stuff/pulls/999/merge').reply(200)
 
-    await probot.receive({ name: 'schedule.repository',
-      payload: {
-        'repository': {
-          'name': 'stuff',
-          'owner': {
-            'login': 'fake'
-          }
-        }
-      }
-    })
+    await fauxbot.trigger()
   })
 
   test('leaves a comment when a PR is not mergeable', async () => {
@@ -100,15 +70,6 @@ describe('scheduled-merge', () => {
       body: 'Failed to automatically merge with error: **Pull Request is not mergeable**'
     }).reply(201)
 
-    await probot.receive({ name: 'schedule.repository',
-      payload: {
-        'repository': {
-          'name': 'stuff',
-          'owner': {
-            'login': 'fake'
-          }
-        }
-      }
-    })
+    await fauxbot.trigger()
   })
 })
