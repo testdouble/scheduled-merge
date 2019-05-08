@@ -83,7 +83,5 @@ describe('scheduled-merge', () => {
         }
       }
     })
-
-    console.log('wat', nock.pendingMocks())
   })
 })

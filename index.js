@@ -22,15 +22,13 @@ module.exports = app => {
         owner, repo, labels, state: 'open'
       }).catch(() => { app.log.debug('No open PRs found') })
 
-      pulls.data.forEach(pull => {
+      await Promise.all(pulls.data.map(pull => {
         app.log.debug(`Merging PR: ${pull.url}`)
-
-        github.pulls.merge({
+        return github.pulls.merge({
           owner,
           repo,
           pull_number: pull.number
         }).catch(e => {
-          console.log('WTF', e)
           github.issues.createComment({
             owner,
             repo,
@@ -38,7 +36,7 @@ module.exports = app => {
             body: `Failed to automatically merge with error: **${e.message}**`
           })
         })
-      })
+      }))
     }
   })
 }

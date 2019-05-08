@@ -16,5 +16,6 @@ beforeEach(function () {
 })
 
 afterEach(function () {
+  expect(nock.pendingMocks()).toEqual([])
   td.reset()
 })
