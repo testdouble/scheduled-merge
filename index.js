@@ -1,5 +1,6 @@
 const probotScheduler = require('probot-scheduler')
-const labelOfTheDay = require('./lib/label-of-the-day')
+
+const run = require('./lib/run')
 // require('nock').recorder.rec({ gunzip: true })
 
 module.exports = app => {
@@ -7,41 +8,12 @@ module.exports = app => {
     delay: process.env.NODE_ENV === 'production'
   })
   app.on('schedule.repository', async function (context) {
-    const github = context.github
     const { owner, repo } = context.repo({ logger: app.log })
-    const labelName = labelOfTheDay()
-    app.log.debug(`Searching for open PRs for ${owner}/${repo} with label ${labelName}`)
-    const label = await github.issues.getLabel({
-      owner, repo, name: labelName
-    }).catch(() => { app.log.debug(`No label named ${labelName}`) })
-
-    if (label) {
-      app.log.debug(`Searching for PRs labeled ${labelName}`)
-      const labels = label.data.name
-      const pulls = await github.issues.listForRepo({
-        owner, repo, labels, state: 'open'
-      }).catch(() => { app.log.debug('No open PRs found') })
-
-      await Promise.all(pulls.data.map(async pull => {
-        app.log.debug(`Merging PR: ${pull.url}`)
-        if (pull.labels.find(l => l.name === 'merge-failed')) {
-          app.log.debug('Skipping because `merge-failed` label was applied.')
-          return false
-        } else {
-          return github.pulls.merge({
-            owner,
-            repo,
-            pull_number: pull.number
-          }).catch(e => {
-            return github.issues.createComment({
-              owner,
-              repo,
-              issue_number: pull.number,
-              body: `Failed to automatically merge with error: **${e.message}**`
-            })
-          })
-        }
-      }))
-    }
+    run({
+      owner,
+      repo,
+      github: context.github,
+      log: app.log
+    })
   })
 }
