@@ -13,15 +13,14 @@ module.exports = {
   },
 
   beforeEach () {
-    ought.equal(nock.pendingMocks(), [])
-    td.reset.onNextReset(() => nock.cleanAll())
-    global.api = nock('https://api.github.com')
+    nock.cleanAll()
     setTimeout(() => {
-      api.done()
+      nock.done()
     }, 700)
   },
 
   afterEach () {
+    ought.equal(nock.pendingMocks(), [])
     td.reset()
   }
 }

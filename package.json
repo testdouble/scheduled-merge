@@ -42,8 +42,7 @@
     "globals": [
       "td",
       "nock",
-      "ought",
-      "api"
+      "ought"
     ]
   },
   "nodemonConfig": {
