@@ -14,7 +14,8 @@ module.exports = {
 
   async 'starts probot-scheduler' () {
     td.verify(fauxbot.probotScheduler(fauxbot.app, {
-      delay: false
+      delay: false,
+      interval: 30 * 60 * 1000
     }))
   },
 
