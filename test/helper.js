@@ -14,9 +14,6 @@ module.exports = {
 
   beforeEach () {
     nock.cleanAll()
-    setTimeout(() => {
-      nock.done()
-    }, 700)
   },
 
   afterEach () {

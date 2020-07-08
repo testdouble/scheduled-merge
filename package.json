@@ -21,18 +21,18 @@
     "test": "teenytest && standard"
   },
   "dependencies": {
-    "probot": "^9.2.10",
+    "probot": "^9.11.5",
     "probot-scheduler": "^2.0.0-beta.1"
   },
   "devDependencies": {
-    "nock": "^10.0.6",
-    "nodemon": "^1.17.2",
+    "nock": "^13.0.2",
+    "nodemon": "^2.0.4",
     "ought": "0.0.6",
-    "smee-client": "^1.0.2",
-    "standard": "^12.0.1",
-    "teenytest": "^5.2.0",
+    "smee-client": "^1.1.0",
+    "standard": "^14.3.4",
+    "teenytest": "^6.0.2",
     "teenytest-promise": "^1.0.0",
-    "testdouble": "^3.11.0",
+    "testdouble": "^3.16.1",
     "testdouble-jest": "^2.0.0"
   },
   "engines": {
