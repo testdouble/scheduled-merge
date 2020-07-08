@@ -12,12 +12,13 @@ module.exports = class Fauxbot {
   }
 
   trigger () {
-    return this.probot.receive({ name: 'schedule.repository',
+    return this.probot.receive({
+      name: 'schedule.repository',
       payload: {
-        'repository': {
-          'name': 'stuff',
-          'owner': {
-            'login': 'fake'
+        repository: {
+          name: 'stuff',
+          owner: {
+            login: 'fake'
           }
         }
       }

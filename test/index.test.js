@@ -33,7 +33,7 @@ module.exports = {
       api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': label, 'state': 'open' })
+        .query({ labels: label, state: 'open' })
         .reply(200, [])
 
       await fauxbot.trigger()
@@ -43,7 +43,7 @@ module.exports = {
       api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': label, 'state': 'open' })
+        .query({ labels: label, state: 'open' })
         .reply(200, [{
           url: 'fake pull url',
           number: 999,
@@ -58,7 +58,7 @@ module.exports = {
       api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': label, 'state': 'open' })
+        .query({ labels: label, state: 'open' })
         .reply(200, [{
           url: 'fake pull url',
           number: 999,
@@ -75,11 +75,11 @@ module.exports = {
       api.get(`/repos/fake/stuff/labels/${label}`).reply(200, { name: label })
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': label, 'state': 'open' })
+        .query({ labels: label, state: 'open' })
         .reply(200, [{ number: 999, labels: [] }])
 
       api.put('/repos/fake/stuff/pulls/999/merge')
-        .reply(405, { 'message': 'Pull Request is not mergeable' })
+        .reply(405, { message: 'Pull Request is not mergeable' })
 
       api.get('/repos/fake/stuff/labels/merge-failed').reply(404)
 
@@ -117,7 +117,7 @@ module.exports = {
         .reply(200, [{ name: oldLabel }])
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': oldLabel, 'state': 'open' })
+        .query({ labels: oldLabel, state: 'open' })
         .reply(200, [{ number: 999, labels: [] }])
 
       await fauxbot.trigger()
@@ -143,13 +143,13 @@ module.exports = {
         )
 
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': 'merge-2003-03-03', 'state': 'open' })
+        .query({ labels: 'merge-2003-03-03', state: 'open' })
         .reply(200, [])
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': 'merge-2003-03-04', 'state': 'open' })
+        .query({ labels: 'merge-2003-03-04', state: 'open' })
         .reply(200, [{ number: 999, labels: [] }])
       api.get('/repos/fake/stuff/issues')
-        .query({ 'labels': 'merge-2003-03-05', 'state': 'open' })
+        .query({ labels: 'merge-2003-03-05', state: 'open' })
         .reply(200, [])
 
       api.delete('/repos/fake/stuff/labels/merge-2003-03-03')
