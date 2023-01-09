@@ -21,7 +21,7 @@
     "test": "teenytest && standard"
   },
   "dependencies": {
-    "probot": "^9.11.5",
+    "probot": "^12.2.8",
     "probot-scheduler": "^2.0.0-beta.1"
   },
   "devDependencies": {
